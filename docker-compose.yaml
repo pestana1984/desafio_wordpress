@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+  desafio_wordpress:
+    driver: bridge
+
+volumes: 
+  wordpress_data:
+  mariadb_data:
+
+services:
+  wordpress:
+    container_name: wordpress
+
+    image: "wordpress:${wordpress_version}"
+
+    ports:
+     - 8080:80
+     - 443:443
+
+    networks:
+      - desafio_wordpress
+
+    volumes:
+      - wordpress_data:/var/www/html
+
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_USER=root
+      - WORDPRESS_DB_PASSWORD=rootpass@123
+      - WORDPRESS_DB_NAME=wpdb
+    
+    depends_on:
+      - mariadb
+
+  mariadb:
+    container_name: mariadb
+
+    image: "mariadb:${mariadb_version}"
+
+    ports:
+      - 3306:3306
+
+    networks:
+      - desafio_wordpress
+
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+    environment:
+      - MARIADB_ROOT_PASSWORD=rootpass@123
